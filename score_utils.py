@@ -9,7 +9,7 @@ FILE = "scores.json"
 def create_score_file():
     try:
         file = open(FILE, "w")
-        json.dump({"profiles": [], "last_profile": game_state.profile_name}, file)
+        json.dump({"profiles": [], "last_profile": game_state.profile_name}, file, indent=4)
         file.close()
     except IOError as e:
         print(e)

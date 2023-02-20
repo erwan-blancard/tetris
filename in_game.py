@@ -1,4 +1,3 @@
-import time
 import pygame
 import score_utils
 import text
@@ -17,10 +16,6 @@ class InGameState(game_state.GameState):
 
     def __init__(self):
         super().__init__()
-        # Time Before Update
-        self.TBU = 0.5
-        self.last_update: float = 0
-
         self.paused = False
 
         window_bounds = pygame.display.get_window_size()
@@ -33,9 +28,8 @@ class InGameState(game_state.GameState):
     def update(self):
         super().update()
         if not self.paused:
-            if time.time() > self.last_update + self.TBU:
-                self.last_update = time.time()
-                # update
+            # update
+            pass
 
     def render(self, screen: pygame.Surface):
         if self.paused:

@@ -47,7 +47,7 @@ while running:
 
     state.update()
 
-    screen.fill((40, 40, 40))
+    screen.fill((0, 0, 0))
 
     state.render(screen)
 

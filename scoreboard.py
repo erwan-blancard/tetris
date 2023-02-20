@@ -11,7 +11,7 @@ class ScoreBoardState(GameState):
     def __init__(self):
         super().__init__()
         window_bounds = pygame.display.get_window_size()
-        self.scrolling_list = ScrollingList(32, 128, window_bounds[0]-64, window_bounds[1] - 128-16)
+        self.scrolling_list = ScrollingList(32, 128, window_bounds[0]-64, window_bounds[1] - 128-16, color=(50, 50, 50))
         self.score_list_formatted = []
         self.load_scores()
 
