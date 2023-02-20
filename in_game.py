@@ -1,0 +1,63 @@
+import time
+import pygame
+import score_utils
+import text
+import game_state
+from button import ButtonLabel
+
+
+def render_overlay(screen: pygame.Surface):
+    rect_over = pygame.Surface((screen.get_width(), screen.get_height()))
+    rect_over.set_alpha(150)
+    rect_over.fill((40, 40, 40))
+    screen.blit(rect_over, (0, 0))
+
+
+class InGameState(game_state.GameState):
+
+    def __init__(self):
+        super().__init__()
+        # Time Before Update
+        self.TBU = 0.5
+        self.last_update: float = 0
+
+        self.paused = False
+
+        window_bounds = pygame.display.get_window_size()
+        self.buttons = [
+            ButtonLabel("Continuer", window_bounds[0] / 2 - 109, window_bounds[1] / 2, 218, 24, font=text.get_font(24), command=lambda: self.close_pause_menu()),
+            ButtonLabel("Recommencer", window_bounds[0] / 2 - 132, window_bounds[1] / 2 + 84, 264, 24, font=text.get_font(24), command=lambda: game_state.set_state(game_state.INGAME)),
+            ButtonLabel("Quitter", window_bounds[0] / 2 - 86, window_bounds[1] / 2 + 168, 172, 24, font=text.get_font(24), command=lambda: game_state.set_state(game_state.MENU))
+        ]
+
+    def update(self):
+        super().update()
+        if not self.paused:
+            if time.time() > self.last_update + self.TBU:
+                self.last_update = time.time()
+                # update
+
+    def render(self, screen: pygame.Surface):
+        if self.paused:
+            render_overlay(screen)
+            text.draw_centered_text("Pause", screen.get_width()/2, 92, screen, text.get_font(48))
+            super().render(screen)
+
+    def input(self, event: pygame.event.Event):
+        if not self.paused:
+            # input
+            if event.type == pygame.KEYDOWN:
+                pass
+
+        if event.type == pygame.KEYDOWN:
+            if pygame.key.name(event.key) == "escape":
+                if self.paused:
+                    self.paused = False
+                else:
+                    self.paused = True
+
+        if self.paused:
+            super().input(event)
+
+    def close_pause_menu(self):
+        self.paused = False
