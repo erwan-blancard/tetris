@@ -32,7 +32,6 @@ T_I = [
      [False, True, False, False],
      [False, True, False, False]]
 ]
-
 T_O = [
     [[True, True],
      [True, True]]
@@ -72,7 +71,7 @@ T_L = [
      [False, True, False],
      [False, True, False]]
 ]
-T_Z = [
+T_Z4 = [
     [[True, True, False],
      [False, True, True],
      [False, False, False]],
@@ -88,6 +87,15 @@ T_Z = [
     [[False, True, False],
      [True, True, False],
      [True, False, False]]
+]
+T_Z = [
+    [[True, True, False],
+     [False, True, True],
+     [False, False, False]],
+
+    [[False, False, True],
+     [False, True, True],
+     [False, True, False]]
 ]
 T_T = [
     [[False, True, False],
@@ -106,7 +114,7 @@ T_T = [
      [True, True, False],
      [False, True, False]]
 ]
-T_S = [
+T_S4 = [
     [[False, True, True],
      [True, True, False],
      [False, False, False]],
@@ -122,6 +130,15 @@ T_S = [
     [[True, False, False],
      [True, True, False],
      [False, True, False]]
+]
+T_S = [
+    [[False, True, True],
+     [True, True, False],
+     [False, False, False]],
+
+    [[False, True, False],
+     [False, True, True],
+     [False, False, True]]
 ]
 
 
@@ -150,10 +167,12 @@ class TetrominoBase:
         self.current_tiles = 0
         self.color = -1
 
-    # default expect 3x3
-    def rotate(self, playfield: list[list[int]], pos: tuple[int, int], counter_clockwise=False):
+    def get_tiles(self):
+        return self.tiles[self.current_tiles]
+
+    def rotate(self, playfield: list[list[int]], current_pos: tuple[int, int], counter_clockwise=False):
         if not counter_clockwise:
-            if self.current_tiles + 1 < 4:
+            if self.current_tiles + 1 < len(self.tiles):
                 self.current_tiles += 1
             else:
                 self.current_tiles = 0
@@ -161,12 +180,54 @@ class TetrominoBase:
             if self.current_tiles - 1 >= 0:
                 self.current_tiles -= 1
             else:
-                self.current_tiles = 3
+                self.current_tiles = len(self.tiles)-1
+
+    def can_move_left(self, playfield: list[list[int]], current_pos: tuple[int, int]):
+        for col in range(len(self.get_tiles())):
+            for row in range(len(self.get_tiles()[0])):
+                x = current_pos[0] + col
+                y = current_pos[1] + row
+                if self.get_tiles()[col][row]:
+                    # if OOB
+                    if x == 0:
+                        return False
+                    # if block present
+                    elif x > 0 and y <= len(playfield[0])-1 and playfield[x-1][y] != 0:
+                        return False
+        return True
+
+    def can_move_right(self, playfield: list[list[int]], current_pos: tuple[int, int]):
+        for col in range(len(self.get_tiles())):
+            for row in range(len(self.get_tiles()[0])):
+                x = current_pos[0] + col
+                y = current_pos[1] + row
+                if self.get_tiles()[col][row]:
+                    # if OOB
+                    if x == len(playfield)-1:
+                        return False
+                    # if block present
+                    elif x <= len(playfield)-1 and y <= len(playfield[0])-1 and playfield[x+1][y] != 0:
+                        return False
+        return True
+
+    def can_move_down(self, playfield: list[list[int]], current_pos: tuple[int, int]):
+        for col in range(len(self.get_tiles())):
+            for row in range(len(self.get_tiles()[0])):
+                x = current_pos[0] + col
+                y = current_pos[1] + row
+                if self.get_tiles()[col][row]:
+                    # if OOB
+                    if y == len(playfield[0])-1:
+                        return False
+                    # if block present
+                    if x <= len(playfield)-1 and y <= len(playfield[0])-1 and playfield[x][y+1] != 0:
+                        return False
+        return True
 
     def render_surface(self):
         width = len(self.tiles[self.current_tiles])
         height = len(self.tiles[self.current_tiles][0])
-        surface = pygame.Surface((width * TILESIZE, height * TILESIZE))
+        surface = pygame.Surface((width * TILESIZE, height * TILESIZE), pygame.SRCALPHA)
         for col in range(width):
             for row in range(height):
                 if self.tiles[self.current_tiles][col][row]:
@@ -180,9 +241,6 @@ class Tetromino_I(TetrominoBase):
     def __init__(self):
         super().__init__(tiles=T_I)
         self.color = B_CYAN
-
-    def rotate(self, playfield: list[list[int]], pos: tuple[int, int], counter_clockwise=False):
-        pass
 
 
 class Tetromino_O(TetrominoBase):
@@ -199,27 +257,32 @@ class Tetromino_T(TetrominoBase):
 
     def __init__(self):
         super().__init__(tiles=T_T)
+        self.color = B_PURPLE
 
 
 class Tetromino_S(TetrominoBase):
 
     def __init__(self):
         super().__init__(tiles=T_S)
+        self.color = B_GREEN
 
 
 class Tetromino_Z(TetrominoBase):
 
     def __init__(self):
         super().__init__(tiles=T_Z)
+        self.color = B_RED
 
 
 class Tetromino_J(TetrominoBase):
 
     def __init__(self):
         super().__init__(tiles=T_J)
+        self.color = B_BLUE
 
 
 class Tetromino_L(TetrominoBase):
 
     def __init__(self):
         super().__init__(tiles=T_L)
+        self.color = B_ORANGE

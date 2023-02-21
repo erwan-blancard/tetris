@@ -16,7 +16,7 @@ screen = pygame.display.set_mode((512, 760))
 pygame.display.set_caption("Tetris")
 
 game_state.state = 0
-state = MenuState()
+state = InGameState()
 
 game_state.profile_name = score_utils.get_last_profile()
 

@@ -11,7 +11,25 @@ HEIGHT = 20
 
 
 def new_tetromino():
-    new_t = Tetromino_O()
+    new_t = Tetromino_Z()
+    piece = random.randint(0, 6)
+    if piece == 0:
+        new_t = Tetromino_I()
+    elif piece == 1:
+        new_t = Tetromino_O()
+    elif piece == 2:
+        new_t = Tetromino_Z()
+    elif piece == 3:
+        new_t = Tetromino_S()
+    elif piece == 4:
+        new_t = Tetromino_L()
+    elif piece == 5:
+        new_t = Tetromino_J()
+    elif piece == 6:
+        new_t = Tetromino_T()
+
+    new_t.current_tiles = random.randint(0, len(new_t.tiles)-1)
+
     return new_t
 
 
@@ -19,7 +37,7 @@ class Playfield:
 
     def __init__(self):
         # Time Before Update
-        self.TBU = 0.5
+        self.TBU = 0.1      # 0.5
         self.last_update: float = 0
 
         self.rotate = 0
@@ -41,16 +59,22 @@ class Playfield:
 
     def init_playfield(self):
         self.current_tetromino = new_tetromino()
-        self.current_tetromino_pos = (4, 0)
+        self.current_tetromino_pos = (4, -1)
         self.pending_tetromino = new_tetromino()
 
     def update(self):
         if time.time() > self.last_update + self.TBU:
             self.last_update = time.time()
             # update
+            if self.current_tetromino.can_move_down(self.blocks, self.current_tetromino_pos):
+                self.current_tetromino_pos = (self.current_tetromino_pos[0], self.current_tetromino_pos[1]+1)
+            else:
+                self.print_tetromino_on_board()
+                self.update_lines()
+                self.switch_tetrominos()
 
     def render_surface(self):
-        surface = pygame.Surface((WIDTH*TILESIZE, 20*TILESIZE))
+        surface = pygame.Surface((WIDTH*TILESIZE, HEIGHT*TILESIZE))
         surface.fill((0, 0, 0))
         for col in range(WIDTH):
             for row in range(HEIGHT):
@@ -65,7 +89,17 @@ class Playfield:
         return surface
 
     def input(self, event: pygame.event):
-        pass
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_q:
+                if self.current_tetromino is not None:
+                    self.current_tetromino.rotate(self.blocks, self.current_tetromino_pos, counter_clockwise=True)
+            elif event.key == pygame.K_d:
+                if self.current_tetromino is not None:
+                    self.current_tetromino.rotate(self.blocks, self.current_tetromino_pos)
+            elif event.key == pygame.K_LEFT:
+                self.move_tetromino()
+            elif event.key == pygame.K_RIGHT:
+                self.move_tetromino(right=True)
 
     def add_points_by_combo(self, num_rows: int):
         self.score += (num_rows+(num_rows//4))*100

@@ -35,7 +35,13 @@ class InGameState(game_state.GameState):
             self.playfield.update()
 
     def render(self, screen: pygame.Surface):
-        screen.blit(self.playfield.render_surface(), (0, 0))
+        playfield_surface = self.playfield.render_surface()
+        screen.blit(playfield_surface, (0, 0))
+
+        if self.playfield.pending_tetromino is not None:
+            pending_tetromino_surface = self.playfield.pending_tetromino.render_surface()
+            screen.blit(pending_tetromino_surface, (playfield_surface.get_width() + 32, 48))
+
         if self.paused:
             render_overlay(screen)
             text.draw_centered_text("Pause", screen.get_width()/2, 92, screen, text.get_font(48))
@@ -43,9 +49,7 @@ class InGameState(game_state.GameState):
 
     def input(self, event: pygame.event.Event):
         if not self.paused:
-            # input
-            if event.type == pygame.KEYDOWN:
-                pass
+            self.playfield.input(event)
 
         if event.type == pygame.KEYDOWN:
             if pygame.key.name(event.key) == "escape":
