@@ -16,6 +16,8 @@ class Playfield:
         self.TBU = 0.5
         self.last_update: float = 0
 
+        self.rotate = 0
+
         self.blocks: list[list[int]] = []
         for col in range(WIDTH):
             self.blocks.append([])
@@ -51,19 +53,4 @@ class Playfield:
 
     def get_block_color(self, col, row):
         color_index = self.blocks[col][row]
-        if color_index == B_EMPTY:
-            return 0, 0, 0
-        elif color_index == B_CYAN:
-            return 0, 255, 255
-        elif color_index == B_YELLOW:
-            return 255, 255, 0
-        elif color_index == B_RED:
-            return 255, 0, 0
-        elif color_index == B_BLUE:
-            return 0, 0, 255
-        elif color_index == B_GREEN:
-            return 0, 255, 0
-        elif color_index == B_ORANGE:
-            return 255, 128, 0
-        elif color_index == B_PURPLE:
-            return 128, 0, 255
+        return tetromino.get_block_color(color_index)
