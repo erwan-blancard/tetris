@@ -3,6 +3,7 @@ import score_utils
 import text
 import game_state
 from button import ButtonLabel
+from playfield import Playfield
 
 
 def render_overlay(screen: pygame.Surface):
@@ -18,6 +19,8 @@ class InGameState(game_state.GameState):
         super().__init__()
         self.paused = False
 
+        self.playfield = Playfield()
+
         window_bounds = pygame.display.get_window_size()
         self.buttons = [
             ButtonLabel("Continuer", window_bounds[0] / 2 - 109, window_bounds[1] / 2, 218, 24, font=text.get_font(24), command=lambda: self.close_pause_menu()),
@@ -32,6 +35,7 @@ class InGameState(game_state.GameState):
             pass
 
     def render(self, screen: pygame.Surface):
+        screen.blit(self.playfield.render_surface(), (0, 0))
         if self.paused:
             render_overlay(screen)
             text.draw_centered_text("Pause", screen.get_width()/2, 92, screen, text.get_font(48))

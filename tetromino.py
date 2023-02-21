@@ -133,7 +133,7 @@ class TetrominoBase:
         self.color = -1
 
     # default expect 3x3
-    def rotate(self, playfield: list[list[int]], counter_clockwise=False):
+    def rotate(self, playfield: list[list[int]], pos: tuple[int, int], counter_clockwise=False):
         if not counter_clockwise:
             if self.current_tiles + 1 < 4:
                 self.current_tiles += 1
