@@ -1,12 +1,18 @@
 import time
+
+import tetromino
 from tetromino import *
 import text
 import pygame
 import random
 
-TILESIZE = 24
 WIDTH = 10
-HEIGHT = 40     # 20 visibles
+HEIGHT = 20
+
+
+def new_tetromino():
+    new_t = Tetromino_O()
+    return new_t
 
 
 class Playfield:
@@ -28,8 +34,15 @@ class Playfield:
         self.score = 0
 
         self.current_tetromino: TetrominoBase = None
-        self.current_tetromino_pos: tuple[int, int] = (4, 22)
+        self.current_tetromino_pos: tuple[int, int] = (0, 0)
         self.pending_tetromino: TetrominoBase = None
+
+        self.init_playfield()
+
+    def init_playfield(self):
+        self.current_tetromino = new_tetromino()
+        self.current_tetromino_pos = (4, 0)
+        self.pending_tetromino = new_tetromino()
 
     def update(self):
         if time.time() > self.last_update + self.TBU:
@@ -38,10 +51,16 @@ class Playfield:
 
     def render_surface(self):
         surface = pygame.Surface((WIDTH*TILESIZE, 20*TILESIZE))
+        surface.fill((0, 0, 0))
         for col in range(WIDTH):
-            for row in range(20):
-                pygame.draw.rect(surface, self.get_block_color(col, row), (col*TILESIZE, (20-row)*TILESIZE, TILESIZE, TILESIZE))
-                text.draw_text(str(col) + ";" + str(row), col*TILESIZE, (20-row)*TILESIZE, surface, text.get_font(8), (255, 255, 255))
+            for row in range(HEIGHT):
+                pygame.draw.rect(surface, self.get_block_color(col, row), (col*TILESIZE, row*TILESIZE, TILESIZE, TILESIZE))
+                pygame.draw.rect(surface, (255, 255, 255), (col*TILESIZE, row*TILESIZE, TILESIZE, TILESIZE), width=1)
+                text.draw_text(str(col) + ";" + str(row), col*TILESIZE, row*TILESIZE, surface, text.get_font(8), (255, 255, 255))
+
+        if self.current_tetromino is not None:
+            tetromino_surface = self.current_tetromino.render_surface()
+            surface.blit(tetromino_surface, (self.current_tetromino_pos[0]*TILESIZE, self.current_tetromino_pos[1]*TILESIZE))
 
         return surface
 

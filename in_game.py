@@ -32,7 +32,7 @@ class InGameState(game_state.GameState):
         super().update()
         if not self.paused:
             # update
-            pass
+            self.playfield.update()
 
     def render(self, screen: pygame.Surface):
         screen.blit(self.playfield.render_surface(), (0, 0))
