@@ -22,7 +22,7 @@ class CustomizeState(GameState):
 
     def render(self, screen: pygame.Surface):
         super().render(screen)
-        text.draw_aligned_text("Titre", screen.get_width()/2, 24, screen, text.get_font(64), color=(255, 220, 30), shadow_color=(255, 140, 30), shadow_offset=8)
+        text.draw_aligned_text("Modes de jeu", screen.get_width()/2, 24, screen, text.get_font(32), color=(255, 220, 30), shadow_color=(255, 140, 30), shadow_offset=4)
 
     def input(self, event: pygame.event.Event):
         super().input(event)

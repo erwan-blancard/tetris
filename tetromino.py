@@ -1,6 +1,6 @@
 import pygame
 
-TILESIZE = 24
+TILESIZE = 32
 
 B_EMPTY = 0
 B_CYAN = 1  # I
@@ -10,6 +10,16 @@ B_GREEN = 4  # S
 B_RED = 5  # Z
 B_BLUE = 6  # J
 B_ORANGE = 7  # L
+
+B_IMG_CYAN = pygame.image.load("res/blocks/cyan.png")
+B_IMG_YELLOW = pygame.image.load("res/blocks/yellow.png")
+B_IMG_PURPLE = pygame.image.load("res/blocks/purple.png")
+B_IMG_GREEN = pygame.image.load("res/blocks/green.png")
+B_IMG_RED = pygame.image.load("res/blocks/red.png")
+B_IMG_BLUE = pygame.image.load("res/blocks/blue.png")
+B_IMG_ORANGE = pygame.image.load("res/blocks/orange.png")
+
+B_IMG_GREY = pygame.image.load("res/blocks/grey.png")
 
 # "rotated" -90
 T_I = [
@@ -100,23 +110,22 @@ T_Z = [
 
 
 def get_block_color(color_index):
-    if color_index == B_EMPTY:
-        return 0, 0, 0
     if color_index == B_CYAN:
-        return 0, 255, 255
+        return B_IMG_CYAN
     if color_index == B_YELLOW:
-        return 255, 255, 0
+        return B_IMG_YELLOW
     if color_index == B_RED:
-        return 255, 0, 0
+        return B_IMG_RED
     if color_index == B_BLUE:
-        return 0, 0, 255
+        return B_IMG_BLUE
     if color_index == B_GREEN:
-        return 0, 255, 0
+        return B_IMG_GREEN
     if color_index == B_ORANGE:
-        return 255, 128, 0
+        return B_IMG_ORANGE
     if color_index == B_PURPLE:
-        return 128, 0, 255
-    return 60, 60, 60
+        return B_IMG_PURPLE
+
+    return B_IMG_GREY
 
 
 class TetrominoBase:
@@ -158,7 +167,7 @@ class TetrominoBase:
                     if x < 0 or x >= len(playfield):
                         return False
                     # if block present
-                    elif 0 <= x <= len(playfield)-1 and y <= len(playfield[0])-1 and playfield[x][y] != 0:
+                    elif 0 <= x <= len(playfield)-1 and 0 <= y <= len(playfield[0])-1 and playfield[x][y] != B_EMPTY:
                         return False
         return True
 
@@ -172,7 +181,7 @@ class TetrominoBase:
                     if x == 0:
                         return False
                     # if block present
-                    elif x > 0 and y <= len(playfield[0])-1 and playfield[x-1][y] != 0:
+                    elif x > 0 and 0 <= y <= len(playfield[0])-1 and playfield[x-1][y] != B_EMPTY:
                         return False
         return True
 
@@ -186,7 +195,7 @@ class TetrominoBase:
                     if x == len(playfield)-1:
                         return False
                     # if block present
-                    elif x <= len(playfield)-1 and y <= len(playfield[0])-1 and playfield[x+1][y] != 0:
+                    elif x <= len(playfield)-1 and 0 <= y <= len(playfield[0])-1 and playfield[x+1][y] != B_EMPTY:
                         return False
         return True
 
@@ -200,7 +209,7 @@ class TetrominoBase:
                     if y == len(playfield[0])-1:
                         return False
                     # if block present
-                    if x <= len(playfield)-1 and y <= len(playfield[0])-1 and playfield[x][y+1] != 0:
+                    if x <= len(playfield)-1 and y <= len(playfield[0])-1 and playfield[x][y+1] != B_EMPTY:
                         return False
         return True
 
@@ -211,7 +220,9 @@ class TetrominoBase:
         for col in range(width):
             for row in range(height):
                 if self.tiles[self.current_tiles][col][row]:
-                    pygame.draw.rect(surface, get_block_color(self.color), (col * TILESIZE, row * TILESIZE, TILESIZE, TILESIZE))
+                    block_img = get_block_color(self.color)
+                    block_img = pygame.transform.scale(block_img, (TILESIZE, TILESIZE))
+                    surface.blit(block_img, (col * TILESIZE, row * TILESIZE))
 
         return surface
 
@@ -228,9 +239,6 @@ class Tetromino_O(TetrominoBase):
     def __init__(self):
         super().__init__(tiles=T_O)
         self.color = B_YELLOW
-
-    def rotate(self, playfield: list[list[int]], pos: tuple[int, int], counter_clockwise=False):
-        pass
 
 
 class Tetromino_T(TetrominoBase):

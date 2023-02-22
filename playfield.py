@@ -28,6 +28,7 @@ def new_tetromino():
     elif piece == 6:
         new_t = Tetromino_T()
 
+    # randomize orientation
     # new_t.current_tiles = random.randint(0, len(new_t.tiles)-1)
 
     return new_t
@@ -47,10 +48,10 @@ class Playfield:
             self.blocks.append([])
             for row in range(HEIGHT):
                 self.blocks[col].append(0)
-                # self.blocks[col].append(random.randint(0, 7))
 
         self.score = 0
         self.turns = 0
+        self.stop = False
 
         self.current_tetromino: TetrominoBase = None
         self.current_tetromino_pos: tuple[int, int] = (0, 0)
@@ -64,7 +65,7 @@ class Playfield:
         self.pending_tetromino = new_tetromino()
 
     def update(self):
-        if time.time() > self.last_update + self.TBU:
+        if not self.stop and time.time() > self.last_update + self.TBU:
             self.last_update = time.time()
             # update tetromino
             if self.current_tetromino.can_move_down(self.blocks, self.current_tetromino_pos):
@@ -77,13 +78,14 @@ class Playfield:
                 self.update_TBU()
 
     def render_surface(self):
-        surface = pygame.Surface((WIDTH*TILESIZE, HEIGHT*TILESIZE))
-        surface.fill((0, 0, 0))
+        surface = pygame.Surface((WIDTH*TILESIZE, HEIGHT*TILESIZE), pygame.SRCALPHA)
         for col in range(WIDTH):
             for row in range(HEIGHT):
-                pygame.draw.rect(surface, self.get_block_color(col, row), (col*TILESIZE, row*TILESIZE, TILESIZE, TILESIZE))
-                pygame.draw.rect(surface, (255, 255, 255), (col*TILESIZE, row*TILESIZE, TILESIZE, TILESIZE), width=1)
-                text.draw_text(str(col) + ";" + str(row), col*TILESIZE, row*TILESIZE, surface, text.get_font(8), (255, 255, 255))
+                pygame.draw.rect(surface, (50, 50, 50), (col*TILESIZE, row*TILESIZE, TILESIZE, TILESIZE), width=1)
+                if self.blocks[col][row] != 0:
+                    block_img = self.get_block_color(col, row)
+                    block_img = pygame.transform.scale(block_img, (TILESIZE, TILESIZE))
+                    surface.blit(block_img, (col*TILESIZE, row*TILESIZE))
 
         if self.current_tetromino is not None:
             tetromino_surface = self.current_tetromino.render_surface()
@@ -92,7 +94,7 @@ class Playfield:
         return surface
 
     def input(self, event: pygame.event):
-        if event.type == pygame.KEYDOWN:
+        if not self.stop and event.type == pygame.KEYDOWN:
             if event.key == pygame.K_q:
                 if self.current_tetromino is not None:
                     self.current_tetromino.rotate(self.blocks, self.current_tetromino_pos, counter_clockwise=True)

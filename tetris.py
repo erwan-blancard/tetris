@@ -12,8 +12,9 @@ pygame.init()
 if not pygame.font.get_init():
     pygame.font.init()
 
-screen = pygame.display.set_mode((512, 760))
+screen = pygame.display.set_mode((576, 760))
 pygame.display.set_caption("Tetris")
+pygame.display.set_icon(pygame.image.load("res/icon.png"))
 
 game_state.state = 0
 state = InGameState()
