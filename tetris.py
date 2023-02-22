@@ -17,7 +17,7 @@ pygame.display.set_caption("Tetris")
 pygame.display.set_icon(pygame.image.load("res/icon.png"))
 
 game_state.state = 0
-state = InGameState()
+state = MenuState()
 
 game_state.profile_name = score_utils.get_last_profile()
 
@@ -27,7 +27,10 @@ while running:
 
     # Update state
     if game_state.update_pending:
-        if game_state.state == game_state.MENU:
+        if game_state.load_custom_ingame:
+            state = InGameState(game_state.gamemode_type)
+            game_state.load_custom_ingame = False
+        elif game_state.state == game_state.MENU:
             state = MenuState()
         elif game_state.state == game_state.INGAME:
             state = InGameState()
@@ -48,7 +51,7 @@ while running:
 
     state.update()
 
-    screen.fill((0, 0, 0))
+    screen.fill((30, 30, 30))
 
     state.render(screen)
 

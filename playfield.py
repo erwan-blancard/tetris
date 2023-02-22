@@ -2,6 +2,7 @@ import time
 
 import tetromino
 from tetromino import *
+from game_state import ENDLESS, SURVIVAL, TIME_ATTACK
 import text
 import pygame
 import random
@@ -36,10 +37,21 @@ def new_tetromino():
 
 class Playfield:
 
-    def __init__(self):
+    def __init__(self, gamemode=ENDLESS):
         # Time Before Update
         self.TBU = 0.4      # 0.5
         self.last_update: float = 0
+
+        self.gamemode = gamemode
+
+        if self.gamemode == SURVIVAL:
+            self.begining_timer = time.time()
+            self.timer = 0.0
+        elif self.gamemode == TIME_ATTACK:
+            self.begining_timer = time.time()
+            self.total_time = 60.0*5
+            self.timer = self.total_time
+            self.lines_cleared = 0
 
         self.rotate = 0
 
@@ -65,6 +77,12 @@ class Playfield:
         self.pending_tetromino = new_tetromino()
 
     def update(self):
+        if not self.stop and (self.gamemode == TIME_ATTACK or self.gamemode == SURVIVAL):
+            self.update_timer()
+            # if time limit is reached in TIME ATTACK
+            if self.gamemode == TIME_ATTACK and self.timer <= 0:
+                self.stop = True
+                self.timer = 0
         if not self.stop and time.time() > self.last_update + self.TBU:
             self.last_update = time.time()
             # update tetromino
@@ -73,7 +91,7 @@ class Playfield:
             else:
                 self.print_tetromino_on_board()
                 self.update_lines()
-                self.switch_tetrominos()
+                self.spawn_next_tetrominos()
                 self.turns += 1
                 self.update_TBU()
 
@@ -81,7 +99,7 @@ class Playfield:
         surface = pygame.Surface((WIDTH*TILESIZE, HEIGHT*TILESIZE), pygame.SRCALPHA)
         for col in range(WIDTH):
             for row in range(HEIGHT):
-                pygame.draw.rect(surface, (50, 50, 50), (col*TILESIZE, row*TILESIZE, TILESIZE, TILESIZE), width=1)
+                pygame.draw.rect(surface, (60, 60, 60), (col*TILESIZE, row*TILESIZE, TILESIZE, TILESIZE), width=1)
                 if self.blocks[col][row] != 0:
                     block_img = self.get_block_color(col, row)
                     block_img = pygame.transform.scale(block_img, (TILESIZE, TILESIZE))
@@ -109,7 +127,10 @@ class Playfield:
                 self.fast_fall_tetromino()
 
     def add_points_by_combo(self, num_rows: int):
-        self.score += (num_rows+(num_rows//4))*100
+        if self.gamemode == TIME_ATTACK:
+            self.lines_cleared += num_rows
+        elif self.gamemode == ENDLESS:
+            self.score += (num_rows+(num_rows//4))*100
 
     def get_block_color(self, col, row):
         color_index = self.blocks[col][row]
