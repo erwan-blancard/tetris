@@ -11,6 +11,7 @@ B_RED = 5  # Z
 B_BLUE = 6  # J
 B_ORANGE = 7  # L
 
+# "rotated" -90
 T_I = [
     [[False, False, False, False],
      [True, True, True, True],
@@ -20,23 +21,13 @@ T_I = [
     [[False, False, True, False],
      [False, False, True, False],
      [False, False, True, False],
-     [False, False, True, False]],
-
-    [[False, False, False, False],
-     [False, False, False, False],
-     [True, True, True, True],
-     [False, False, False, False]],
-
-    [[False, True, False, False],
-     [False, True, False, False],
-     [False, True, False, False],
-     [False, True, False, False]]
+     [False, False, True, False]]
 ]
 T_O = [
     [[True, True],
      [True, True]]
 ]
-T_J = [
+T_L = [
     [[True, False, False],
      [True, True, True],
      [False, False, False]],
@@ -54,7 +45,7 @@ T_J = [
      [True, True, False]]
 
 ]
-T_L = [
+T_J = [
     [[False, False, True],
      [True, True, True],
      [False, False, False]],
@@ -71,24 +62,7 @@ T_L = [
      [False, True, False],
      [False, True, False]]
 ]
-T_Z4 = [
-    [[True, True, False],
-     [False, True, True],
-     [False, False, False]],
-
-    [[False, False, True],
-     [False, True, True],
-     [False, True, False]],
-
-    [[False, False, False],
-     [True, True, False],
-     [False, True, True]],
-
-    [[False, True, False],
-     [True, True, False],
-     [True, False, False]]
-]
-T_Z = [
+T_S = [
     [[True, True, False],
      [False, True, True],
      [False, False, False]],
@@ -99,6 +73,10 @@ T_Z = [
 ]
 T_T = [
     [[False, True, False],
+     [True, True, False],
+     [False, True, False]],
+
+    [[False, True, False],
      [True, True, True],
      [False, False, False]],
 
@@ -108,30 +86,9 @@ T_T = [
 
     [[False, False, False],
      [True, True, True],
-     [False, True, False]],
-
-    [[False, True, False],
-     [True, True, False],
      [False, True, False]]
 ]
-T_S4 = [
-    [[False, True, True],
-     [True, True, False],
-     [False, False, False]],
-
-    [[False, True, False],
-     [False, True, True],
-     [False, False, True]],
-
-    [[False, False, False],
-     [False, True, True],
-     [True, True, False]],
-
-    [[True, False, False],
-     [True, True, False],
-     [False, True, False]]
-]
-T_S = [
+T_Z = [
     [[False, True, True],
      [True, True, False],
      [False, False, False]],
@@ -143,21 +100,23 @@ T_S = [
 
 
 def get_block_color(color_index):
+    if color_index == B_EMPTY:
+        return 0, 0, 0
     if color_index == B_CYAN:
         return 0, 255, 255
-    elif color_index == B_YELLOW:
+    if color_index == B_YELLOW:
         return 255, 255, 0
-    elif color_index == B_RED:
+    if color_index == B_RED:
         return 255, 0, 0
-    elif color_index == B_BLUE:
+    if color_index == B_BLUE:
         return 0, 0, 255
-    elif color_index == B_GREEN:
+    if color_index == B_GREEN:
         return 0, 255, 0
-    elif color_index == B_ORANGE:
+    if color_index == B_ORANGE:
         return 255, 128, 0
-    elif color_index == B_PURPLE:
+    if color_index == B_PURPLE:
         return 128, 0, 255
-    return 0, 0, 0
+    return 60, 60, 60
 
 
 class TetrominoBase:
@@ -171,16 +130,37 @@ class TetrominoBase:
         return self.tiles[self.current_tiles]
 
     def rotate(self, playfield: list[list[int]], current_pos: tuple[int, int], counter_clockwise=False):
-        if not counter_clockwise:
-            if self.current_tiles + 1 < len(self.tiles):
-                self.current_tiles += 1
-            else:
-                self.current_tiles = 0
+        if counter_clockwise:
+            i = 1
+            while i < len(self.tiles):
+                # print("i:", i, "len (modulo):", (len(self.tiles)), "result:", (self.current_tiles+i) % len(self.tiles))
+                if self.can_rotate(playfield, current_pos, (self.current_tiles+i) % len(self.tiles)):
+                    self.current_tiles = (self.current_tiles+i) % len(self.tiles)
+                    break
+                i += 1
         else:
-            if self.current_tiles - 1 >= 0:
-                self.current_tiles -= 1
-            else:
-                self.current_tiles = len(self.tiles)-1
+            i = 1
+            while i < len(self.tiles):
+                # print("i:", i, "len (modulo):", (len(self.tiles)), "result:", (self.current_tiles - i) % len(self.tiles))
+                if self.can_rotate(playfield, current_pos, (self.current_tiles - i) % len(self.tiles)):
+                    self.current_tiles = (self.current_tiles - i) % len(self.tiles)
+                    break
+                i += 1
+
+    def can_rotate(self, playfield: list[list[int]], current_pos: tuple[int, int], next_tiles_index: int):
+        next_tiles = self.tiles[next_tiles_index]
+        for col in range(len(next_tiles)):
+            for row in range(len(next_tiles[0])):
+                x = current_pos[0] + col
+                y = current_pos[1] + row
+                if next_tiles[col][row]:
+                    # if OOB
+                    if x < 0 or x >= len(playfield):
+                        return False
+                    # if block present
+                    elif 0 <= x <= len(playfield)-1 and y <= len(playfield[0])-1 and playfield[x][y] != 0:
+                        return False
+        return True
 
     def can_move_left(self, playfield: list[list[int]], current_pos: tuple[int, int]):
         for col in range(len(self.get_tiles())):

@@ -28,7 +28,7 @@ def new_tetromino():
     elif piece == 6:
         new_t = Tetromino_T()
 
-    new_t.current_tiles = random.randint(0, len(new_t.tiles)-1)
+    # new_t.current_tiles = random.randint(0, len(new_t.tiles)-1)
 
     return new_t
 
@@ -37,7 +37,7 @@ class Playfield:
 
     def __init__(self):
         # Time Before Update
-        self.TBU = 0.1      # 0.5
+        self.TBU = 0.4      # 0.5
         self.last_update: float = 0
 
         self.rotate = 0
@@ -50,6 +50,7 @@ class Playfield:
                 # self.blocks[col].append(random.randint(0, 7))
 
         self.score = 0
+        self.turns = 0
 
         self.current_tetromino: TetrominoBase = None
         self.current_tetromino_pos: tuple[int, int] = (0, 0)
@@ -65,13 +66,15 @@ class Playfield:
     def update(self):
         if time.time() > self.last_update + self.TBU:
             self.last_update = time.time()
-            # update
+            # update tetromino
             if self.current_tetromino.can_move_down(self.blocks, self.current_tetromino_pos):
                 self.current_tetromino_pos = (self.current_tetromino_pos[0], self.current_tetromino_pos[1]+1)
             else:
                 self.print_tetromino_on_board()
                 self.update_lines()
                 self.switch_tetrominos()
+                self.turns += 1
+                self.update_TBU()
 
     def render_surface(self):
         surface = pygame.Surface((WIDTH*TILESIZE, HEIGHT*TILESIZE))
@@ -100,6 +103,8 @@ class Playfield:
                 self.move_tetromino()
             elif event.key == pygame.K_RIGHT:
                 self.move_tetromino(right=True)
+            elif event.key == pygame.K_DOWN:
+                self.fast_fall_tetromino()
 
     def add_points_by_combo(self, num_rows: int):
         self.score += (num_rows+(num_rows//4))*100

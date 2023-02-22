@@ -42,6 +42,8 @@ class InGameState(game_state.GameState):
             pending_tetromino_surface = self.playfield.pending_tetromino.render_surface()
             screen.blit(pending_tetromino_surface, (playfield_surface.get_width() + 32, 48))
 
+        text.draw_text("Score: " + str(self.playfield.score), playfield_surface.get_width() + 32, 256, screen, text.get_font(16))
+
         if self.paused:
             render_overlay(screen)
             text.draw_centered_text("Pause", screen.get_width()/2, 92, screen, text.get_font(48))
