@@ -109,9 +109,9 @@ class InGameState(game_state.GameState):
             elif self.gamemode == MULTIPLAYER:
                 player_name = "missingno"
                 if self.playfield.stop:
-                    player_name = game_state.profile_name
-                elif self.second_playfield.stop:
                     player_name = game_state.second_profile_name
+                elif self.second_playfield.stop:
+                    player_name = game_state.profile_name
                 text.draw_centered_text("Victoire de", screen.get_width() / 2, screen.get_height() / 2 - 64, screen, text.get_font(24), color=(255, 220, 30), shadow_color=(255, 140, 30), shadow_offset=3)
                 text.draw_centered_text(player_name + " !", screen.get_width() / 2, screen.get_height() / 2 - 24, screen, text.get_font(24), color=(255, 220, 30), shadow_color=(255, 140, 30), shadow_offset=3)
 

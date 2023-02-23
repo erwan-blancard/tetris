@@ -22,6 +22,8 @@ class CustomizeState(GameState):
         self.edit_P1_name = ButtonLabel("Modifier", 64, window_bounds[1] - 128, 132, 16, text.get_font(16), command=lambda: self.open_profile_shortcut())
         self.edit_P2_name = ButtonLabel("Modifier", window_bounds[0]-64-132, window_bounds[1] - 128, 132, 16, text.get_font(16), command=lambda: self.open_profile_shortcut(second_profile=True))
 
+        self.show_profile_warning = False
+
     def open_profile_shortcut(self, second_profile=False):
         game_state.last_gamemode_type = self.gamemode_type
         if second_profile:
@@ -42,11 +44,14 @@ class CustomizeState(GameState):
             self.gamemode_type = 3
 
     def set_ingame_state(self):
-        game_state.last_gamemode_type = self.gamemode_type
-        game_state.set_custom_ingame_state(self.gamemode_type)
+        if game_state.profile_name != game_state.second_profile_name:
+            game_state.last_gamemode_type = self.gamemode_type
+            game_state.set_custom_ingame_state(self.gamemode_type)
 
     def update(self):
         super().update()
+        if game_state.profile_name == game_state.second_profile_name:
+            self.show_profile_warning = True
 
     def render(self, screen: pygame.Surface):
         super().render(screen)
@@ -56,6 +61,8 @@ class CustomizeState(GameState):
             text.draw_aligned_text(game_state.profile_name, 64+66, screen.get_height()-128-28, screen, text.get_font(20))
             text.draw_aligned_text(game_state.second_profile_name, screen.get_width() - 64 - 66, screen.get_height() - 128 - 28, screen, text.get_font(20))
             text.draw_aligned_text("VS", screen.get_width()/2, screen.get_height()-128-28, screen, text.get_font(40), color=(255, 220, 30), shadow_color=(255, 140, 30), shadow_offset=5)
+            if self.show_profile_warning:
+                text.draw_aligned_text("Les noms de profil sont identiques !", screen.get_width() / 2, screen.get_height() - 128 - 64, screen, text.get_font(12), color=(255, 60, 60))
         text.draw_aligned_text("Modes de jeu", screen.get_width()/2, 24, screen, text.get_font(32), color=(255, 220, 30), shadow_color=(255, 140, 30), shadow_offset=4)
         gamemode_text = str(self.gamemode_type)
         description = ["Description for gamemode " + str(self.gamemode_type)]
