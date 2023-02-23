@@ -49,7 +49,7 @@ class ScoreBoardState(GameState):
                 line += " "
             score = endless_scores[i][1]
             if score < 0:
-                score = "no entry"
+                score = "---"
             line += str(score)
             self.list_gamemodes_score[ENDLESS].append(line)
         for i in range(len(survival_scores)):
@@ -58,7 +58,7 @@ class ScoreBoardState(GameState):
                 line += " "
             time = survival_scores[i][1]
             if time < 0:
-                time = "no entry"
+                time = "---"
                 line += str(time)
             else:
                 line += in_game.format_time(time)
@@ -69,7 +69,7 @@ class ScoreBoardState(GameState):
                 line += " "
             time = time_attack_scores[i][1]
             if time < 0:
-                time = "no entry"
+                time = "---"
                 line += str(time)
             else:
                 line += in_game.format_time(time)
