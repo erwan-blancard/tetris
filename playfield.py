@@ -12,7 +12,7 @@ HEIGHT = 20
 
 CONTROL_METHOD_SOLO = [pygame.K_LEFT, pygame.K_RIGHT, pygame.K_DOWN, pygame.K_q, pygame.K_d]
 CONTROL_METHOD_1 = [pygame.K_q, pygame.K_d, pygame.K_s, pygame.K_r, pygame.K_t]
-CONTROL_METHOD_2 = [pygame.K_LEFT, pygame.K_RIGHT, pygame.K_DOWN, pygame.K_1, pygame.K_2]
+CONTROL_METHOD_2 = [pygame.K_LEFT, pygame.K_RIGHT, pygame.K_DOWN, pygame.K_KP_1, pygame.K_KP_2]
 LEFT = 0
 RIGHT = 1
 DOWN = 2
