@@ -1,3 +1,5 @@
+import random
+
 import pygame
 
 TILESIZE = 32
@@ -109,6 +111,31 @@ T_Z = [
 ]
 
 
+def new_tetromino(tilesize, randomize_orientation=False):
+    new_t = Tetromino_Z(tilesize=tilesize)
+    piece = random.randint(0, 6)
+    if piece == 0:
+        new_t = Tetromino_I(tilesize=tilesize)
+    elif piece == 1:
+        new_t = Tetromino_O(tilesize=tilesize)
+    elif piece == 2:
+        new_t = Tetromino_Z(tilesize=tilesize)
+    elif piece == 3:
+        new_t = Tetromino_S(tilesize=tilesize)
+    elif piece == 4:
+        new_t = Tetromino_L(tilesize=tilesize)
+    elif piece == 5:
+        new_t = Tetromino_J(tilesize=tilesize)
+    elif piece == 6:
+        new_t = Tetromino_T(tilesize=tilesize)
+
+    # randomize orientation
+    if randomize_orientation:
+        new_t.current_tiles = random.randint(0, len(new_t.tiles)-1)
+
+    return new_t
+
+
 def get_block_color(color_index):
     if color_index == B_CYAN:
         return B_IMG_CYAN
@@ -130,8 +157,9 @@ def get_block_color(color_index):
 
 class TetrominoBase:
 
-    def __init__(self, tiles: list[list[list[bool]]]):
+    def __init__(self, tiles: list[list[list[bool]]], tilesize=TILESIZE):
         self.tiles = tiles
+        self.tilesize = tilesize
         self.current_tiles = 0
         self.color = -1
 
@@ -216,61 +244,61 @@ class TetrominoBase:
     def render_surface(self):
         width = len(self.tiles[self.current_tiles])
         height = len(self.tiles[self.current_tiles][0])
-        surface = pygame.Surface((width * TILESIZE, height * TILESIZE), pygame.SRCALPHA)
+        surface = pygame.Surface((width * self.tilesize, height * self.tilesize), pygame.SRCALPHA)
         for col in range(width):
             for row in range(height):
                 if self.tiles[self.current_tiles][col][row]:
                     block_img = get_block_color(self.color)
-                    block_img = pygame.transform.scale(block_img, (TILESIZE, TILESIZE))
-                    surface.blit(block_img, (col * TILESIZE, row * TILESIZE))
+                    block_img = pygame.transform.scale(block_img, (self.tilesize, self.tilesize))
+                    surface.blit(block_img, (col * self.tilesize, row * self.tilesize))
 
         return surface
 
 
 class Tetromino_I(TetrominoBase):
 
-    def __init__(self):
-        super().__init__(tiles=T_I)
+    def __init__(self, tilesize=TILESIZE):
+        super().__init__(tiles=T_I, tilesize=tilesize)
         self.color = B_CYAN
 
 
 class Tetromino_O(TetrominoBase):
 
-    def __init__(self):
-        super().__init__(tiles=T_O)
+    def __init__(self, tilesize=TILESIZE):
+        super().__init__(tiles=T_O, tilesize=tilesize)
         self.color = B_YELLOW
 
 
 class Tetromino_T(TetrominoBase):
 
-    def __init__(self):
-        super().__init__(tiles=T_T)
+    def __init__(self, tilesize=TILESIZE):
+        super().__init__(tiles=T_T, tilesize=tilesize)
         self.color = B_PURPLE
 
 
 class Tetromino_S(TetrominoBase):
 
-    def __init__(self):
-        super().__init__(tiles=T_S)
+    def __init__(self, tilesize=TILESIZE):
+        super().__init__(tiles=T_S, tilesize=tilesize)
         self.color = B_GREEN
 
 
 class Tetromino_Z(TetrominoBase):
 
-    def __init__(self):
-        super().__init__(tiles=T_Z)
+    def __init__(self, tilesize=TILESIZE):
+        super().__init__(tiles=T_Z, tilesize=tilesize)
         self.color = B_RED
 
 
 class Tetromino_J(TetrominoBase):
 
-    def __init__(self):
-        super().__init__(tiles=T_J)
+    def __init__(self, tilesize=TILESIZE):
+        super().__init__(tiles=T_J, tilesize=tilesize)
         self.color = B_BLUE
 
 
 class Tetromino_L(TetrominoBase):
 
-    def __init__(self):
-        super().__init__(tiles=T_L)
+    def __init__(self, tilesize=TILESIZE):
+        super().__init__(tiles=T_L, tilesize=tilesize)
         self.color = B_ORANGE

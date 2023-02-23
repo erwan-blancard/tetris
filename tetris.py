@@ -4,8 +4,9 @@ import score_utils
 from menu import MenuState
 from in_game import InGameState
 from scoreboard import ScoreBoardState
-from profile import ProfileState
+from profile import ProfileState, ProfileEditShortcutState
 from customize import CustomizeState
+from animated_background import AnimatedBackground
 
 
 pygame.init()
@@ -20,8 +21,12 @@ game_state.state = 0
 state = MenuState()
 
 game_state.profile_name = score_utils.get_last_profile()
+game_state.second_profile_name = score_utils.get_last_second_profile()
 
 running = True
+
+animated_background = AnimatedBackground()
+
 
 while running:
 
@@ -40,6 +45,10 @@ while running:
             state = ScoreBoardState()
         elif game_state.state == game_state.CUSTOMIZE:
             state = CustomizeState()
+        elif game_state.state == game_state.PROFILE_SHORTCUT_P1:
+            state = ProfileEditShortcutState()
+        elif game_state.state == game_state.PROFILE_SHORTCUT_P2:
+            state = ProfileEditShortcutState(second_profile=True)
         else:
             print("Invalid state id:", game_state.state)
         game_state.update_pending = False
@@ -50,8 +59,10 @@ while running:
         state.input(event)
 
     state.update()
+    animated_background.update()
 
     screen.fill((30, 30, 30))
+    animated_background.render(screen)
 
     state.render(screen)
 

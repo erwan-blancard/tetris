@@ -7,12 +7,13 @@ update_pending = False
 
 load_custom_ingame = False
 gamemode_type = 0
+last_gamemode_type = 0
 
 # gamemodes
 ENDLESS = 0
 SURVIVAL = 1
 TIME_ATTACK = 2
-# MULTIPLAYER = 3
+MULTIPLAYER = 3
 
 
 MENU = 0
@@ -20,9 +21,12 @@ INGAME = 1
 PROFILE = 2
 SCOREBOARD = 3
 CUSTOMIZE = 4
+PROFILE_SHORTCUT_P1 = 5
+PROFILE_SHORTCUT_P2 = 6
 
 
-profile_name = "joueur"
+profile_name = "joueur 1"
+second_profile_name = "joueur 2"
 
 
 def set_state(newstate):

@@ -22,7 +22,7 @@ class ScoreBoardState(GameState):
             for profile_name in profiles:
                 profile_list.append(profile_name)
         for profile in profile_list:
-            score = score_utils.get_score(profile)
+            score = score_utils.get_score(profile, 1)
             string_formatted = profile
             for i in range(20 - len(profile)):
                 string_formatted += " "
@@ -41,5 +41,5 @@ class ScoreBoardState(GameState):
         super().input(event)
         self.scrolling_list.mouse_input(event)
         if event.type == pygame.KEYDOWN:
-            if pygame.key.name(event.key) == "escape":
+            if event.key == pygame.K_ESCAPE:
                 game_state.set_state(game_state.MENU)

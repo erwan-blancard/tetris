@@ -9,7 +9,7 @@ FILE = "scores.json"
 def create_score_file():
     try:
         file = open(FILE, "w")
-        json.dump({"profiles": [], "last_profile": game_state.profile_name}, file, indent=4)
+        json.dump({"profiles": [{}], "last_profile": game_state.profile_name, "last_second_profile": game_state.second_profile_name}, file, indent=4)
         file.close()
     except IOError as e:
         print(e)
@@ -48,6 +48,14 @@ def set_last_profile(profile: str):
     write_to_file(json_dict)
 
 
+def set_last_second_profile(profile: str):
+    file = open_score_file()
+    json_dict = get_JSON(file)
+    file.close()
+    json_dict["last_second_profile"] = profile
+    write_to_file(json_dict)
+
+
 def get_last_profile():
     last_profile = game_state.profile_name
     file = open_score_file()
@@ -61,6 +69,19 @@ def get_last_profile():
     return last_profile
 
 
+def get_last_second_profile():
+    last_second_profile = game_state.second_profile_name
+    file = open_score_file()
+    if file is not None:
+        json_dict: dict = get_JSON(file)
+        if json_dict is not None:
+            if "last_second_profile" in json_dict:
+                last_second_profile = json_dict["last_second_profile"]
+    if file is not None:
+        file.close()
+    return last_second_profile
+
+
 def get_profiles():
     profile_list = []
     file = open_score_file()
@@ -69,15 +90,15 @@ def get_profiles():
         if json_dict is not None:
             if "profiles" in json_dict:
                 if type(json_dict["profiles"]) == list:
-                    for prof in json_dict["profiles"]:
-                        if "name" in prof:
-                            profile_list.append(prof["name"])
+                    for i in range(len(json_dict["profiles"])):
+                        if "name" in json_dict["profiles"][i]:
+                            profile_list.append(json_dict["profiles"][i]["name"])
     if file is not None:
         file.close()
     return profile_list
 
 
-def get_score(profile: str):
+def get_score(profile: str, gamemode: int):
     score = -1
     file = open_score_file()
     if file is not None:
@@ -86,37 +107,39 @@ def get_score(profile: str):
         if json_dict is not None:
             if "profiles" in json_dict:
                 if type(json_dict["profiles"]) == list:
-                    for prof in json_dict["profiles"]:
-                        if "name" in prof and prof["name"] == profile and "score" in prof and type(prof["score"]) == int:
-                            score = prof["score"]
+                    for i in range(len(json_dict["profiles"])):
+                        if "name" in json_dict["profiles"][i] and json_dict["profiles"][i]["name"] == profile and "scores" in json_dict["profiles"][i] and type(json_dict["profiles"][i]["scores"]) == list:
+                            score = json_dict["profiles"][i]["scores"][gamemode]
     return score
 
 
-def append_profile(profile: str, score):
+def append_profile(profile: str, gamemode, score):
     file = open_score_file()
     json_dict = get_JSON(file)
     file.close()
     if "profiles" in json_dict:
         if type(json_dict["profiles"]) == list:
-            json_dict["profiles"].append({"name": profile, "score": score})
+            scores = [0, 0, 0]
+            scores[gamemode] = score
+            json_dict["profiles"].append({"name": profile, "scores": scores})
             write_to_file(json_dict)
 
 
-def add_score(profile: str, score):
+def add_score(profile: str, gamemode, score):
     file = open_score_file()
     json_dict = get_JSON(file)
     file.close()
     if "profiles" in json_dict:
         if type(json_dict["profiles"]) == list:
             profile_found = False
-            for prof in json_dict["profiles"]:
-                if "name" in prof and prof["name"] == profile:
+            for i in range(len(json_dict["profiles"])):
+                if "name" in json_dict["profiles"][i] and json_dict["profiles"][i]["name"] == profile:
                     profile_found = True
-                    prof["score"] = score
+                    json_dict["profiles"][i]["scores"][gamemode] = score
                     write_to_file(json_dict)
                     break
             if not profile_found:
-                append_profile(profile, score)
+                append_profile(profile, gamemode, score)
     else:
         create_score_file()
-        append_profile(profile, score)
+        append_profile(profile, gamemode, score)
