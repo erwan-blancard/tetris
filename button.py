@@ -13,7 +13,7 @@ class BaseButton:
         self.mouse_clicked = False
 
     def render(self, screen: pygame.Surface):
-        pygame.draw.rect(screen, (255, 0, 0), (self.x, self.y, self.width, self.height), width=1)
+        # pygame.draw.rect(screen, (255, 0, 0), (self.x, self.y, self.width, self.height), width=1)
         pass
 
     def mouse_input(self, event: pygame.event.Event):

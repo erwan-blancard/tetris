@@ -119,7 +119,7 @@ def append_profile(profile: str, gamemode, score):
     file.close()
     if "profiles" in json_dict:
         if type(json_dict["profiles"]) == list:
-            scores = [0, 0, 0]
+            scores = [-1, -1, -1]
             scores[gamemode] = score
             json_dict["profiles"].append({"name": profile, "scores": scores})
             write_to_file(json_dict)

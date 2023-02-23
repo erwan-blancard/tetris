@@ -27,6 +27,12 @@ running = True
 
 animated_background = AnimatedBackground()
 
+score_utils.add_score("j1", 0, 55)
+score_utils.add_score("j1", 1, 55.2)
+score_utils.add_score("j1", 2, 5)
+score_utils.add_score("j2", 0, -1)
+for i in range(20):
+    score_utils.add_score("jadd"+str(i), 0, -1)
 
 while running:
 
