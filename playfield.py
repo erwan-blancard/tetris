@@ -24,7 +24,7 @@ class Playfield:
 
     def __init__(self, gamemode=ENDLESS, alternative_control_method=False):
         # Time Before Update
-        self.TBU = 0.4      # 0.5
+        self.TBU = 0.4
         self.last_update: float = 0
         self.tilesize = TILESIZE
 
