@@ -27,7 +27,6 @@ running = True
 
 animated_background = AnimatedBackground()
 
-
 while running:
 
     # Update state

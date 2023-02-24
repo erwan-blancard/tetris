@@ -33,7 +33,9 @@ class Playfield:
         self.control_keys = CONTROL_METHOD_SOLO
         if self.gamemode == MULTIPLAYER:
             self.tilesize = 20
-            self.pending_badlines = 0
+            # self.added_badlines = False     # handled by InGameState
+            self.next_opponent_badlines = 0      # handled by InGameState
+            self.pending_badlines = 0   # handled by Playfield
             if alternative_control_method:
                 self.control_keys = CONTROL_METHOD_2
             else:
@@ -202,6 +204,10 @@ class Playfield:
         if len(list_rows_filled) > 0:
             self.clear_lines(list_rows_filled)
             self.add_points_by_combo(len(list_rows_filled))
+            if self.gamemode == MULTIPLAYER:
+                self.next_opponent_badlines = len(list_rows_filled) -1
+                if self.pending_badlines > 0:
+                    self.add_pending_badlines()
 
     def clear_lines(self, rows_filled: list[int]):
         new_blocks: list[list[int]] = []
@@ -218,4 +224,28 @@ class Playfield:
                 for col in range(len(self.blocks)):
                     new_blocks[col][(len(self.blocks[0])-row-1)+rows_chained] = self.blocks[col][(len(self.blocks[0])-row-1)]
 
+        self.blocks = new_blocks
+
+    def add_pending_badlines(self):
+        print("add badlines")
+        new_blocks: list[list[int]] = []
+        for col in range(len(self.blocks)):
+            new_blocks.append([])
+            for row in range(len(self.blocks[0])):
+                new_blocks[col].append(0)
+
+        for col in range(len(self.blocks)):
+            omitted_col = random.randint(0, len(self.blocks)-1)
+            for row in range(len(self.blocks[0])):
+                if 0 <= row - self.pending_badlines < len(self.blocks[0]):
+                    new_blocks[col][row] = self.blocks[col][row - self.pending_badlines]
+                elif row - self.pending_badlines:
+                    print("add badlines elif")
+                    if col != omitted_col:
+                        new_blocks[col][row] = -1
+                    else:
+                        new_blocks[col][row] = B_EMPTY
+
+        self.pending_badlines = 0
+        self.added_badlines = True
         self.blocks = new_blocks

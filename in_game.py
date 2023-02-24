@@ -38,6 +38,8 @@ class InGameState(game_state.GameState):
 
         if self.gamemode == MULTIPLAYER:
             self.second_playfield = Playfield(self.gamemode, alternative_control_method=True)
+            self.playfield_last_turn = 0
+            self.second_playfield_last_turn = 0
 
         window_bounds = pygame.display.get_window_size()
         self.buttons = [
@@ -58,6 +60,13 @@ class InGameState(game_state.GameState):
                 self.playfield.update()
                 if self.gamemode == MULTIPLAYER:
                     self.second_playfield.update()
+                    # check badlines
+                    if self.playfield.turns > self.playfield_last_turn:
+                        self.second_playfield.pending_badlines += self.playfield.next_opponent_badlines
+                        self.playfield.next_opponent_badlines = 0
+                    if self.second_playfield.turns > self.second_playfield_last_turn:
+                        self.playfield.pending_badlines += self.second_playfield.next_opponent_badlines
+                        self.second_playfield.next_opponent_badlines = 0
             else:
                 if not self.add_score_check:
                     if self.gamemode == ENDLESS:
