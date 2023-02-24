@@ -108,10 +108,11 @@ class InGameState(game_state.GameState):
 
         if self.gamemode == ENDLESS:
             text.draw_aligned_text("Score: " + str(self.playfield.score), screen.get_width() - playfield_surface.get_width()/2 - 83, 43, screen, text.get_font(16))
-        elif self.gamemode == SURVIVAL or self.gamemode == TIME_ATTACK:
-            text.draw_text("Chrono: " + format_time(self.playfield.timer), screen.get_width() - playfield_surface.get_width()/2 - 148, 43, screen, text.get_font(10))
-            if self.gamemode == TIME_ATTACK:
-                text.draw_text("Lignes: " + str(self.playfield.lines_cleared), screen.get_width() - playfield_surface.get_width() + 13, 43-24, screen, text.get_font(10))
+        elif self.gamemode == SURVIVAL:
+            text.draw_aligned_text("Chrono: " + format_time(self.playfield.timer), screen.get_width() - playfield_surface.get_width()/2 - 83, 43, screen, text.get_font(16))
+        elif self.gamemode == TIME_ATTACK:
+            text.draw_aligned_text("Lignes: " + str(self.playfield.lines_cleared), screen.get_width() - playfield_surface.get_width()/2 - 83, 43-24, screen, text.get_font(10))
+            text.draw_aligned_text("Chrono: " + format_time(self.playfield.timer), screen.get_width() - playfield_surface.get_width()/2 - 83, 43, screen, text.get_font(10))
 
         if self.is_game_over():
             render_overlay(screen)
