@@ -85,24 +85,33 @@ class InGameState(game_state.GameState):
         second_playfield_surface = None
         if self.gamemode == MULTIPLAYER:
             second_playfield_surface = self.second_playfield.render_surface()
-        screen.blit(playfield_surface, (0, 0))
-        if second_playfield_surface is not None and self.gamemode == MULTIPLAYER:
-            screen.blit(second_playfield_surface, (screen.get_width()-second_playfield_surface.get_width(), 0))
-
-        if self.playfield.pending_tetromino is not None:
-            pending_tetromino_surface = self.playfield.pending_tetromino.render_surface()
-            screen.blit(pending_tetromino_surface, (playfield_surface.get_width() + 32, 48))
+        if self.gamemode == ENDLESS or self.gamemode == SURVIVAL or self.gamemode == TIME_ATTACK:
+            screen.blit(playfield_surface, (screen.get_width() - playfield_surface.get_width() - 83, 70))
         if self.gamemode == MULTIPLAYER:
+            screen.blit(playfield_surface, (50, 200))
+            screen.blit(second_playfield_surface, (screen.get_width() - second_playfield_surface.get_width() - 50, 200))
+
+        if self.gamemode == ENDLESS or self.gamemode == SURVIVAL or self.gamemode == TIME_ATTACK:
+            if self.playfield.pending_tetromino is not None:
+                pending_tetromino_surface = self.playfield.pending_tetromino.render_surface()
+                screen.blit(pending_tetromino_surface, (50, 150))
+
+        if self.gamemode == MULTIPLAYER:
+            text.draw_aligned_text(game_state.profile_name, 50+playfield_surface.get_width()/2, 20, screen, text.get_font(16))
+            text.draw_aligned_text(game_state.second_profile_name, screen.get_width() - second_playfield_surface.get_width()/2 - 50, 20, screen, text.get_font(16))
+            if self.playfield.pending_tetromino is not None:
+                pending_tetromino_surface = self.playfield.pending_tetromino.render_surface()
+                screen.blit(pending_tetromino_surface, (130, 80))
             if self.second_playfield.pending_tetromino is not None:
                 pending_tetromino_surface = self.second_playfield.pending_tetromino.render_surface()
-                screen.blit(pending_tetromino_surface, (screen.get_width() - second_playfield_surface.get_width() - pending_tetromino_surface.get_width() - 32, second_playfield_surface.get_height()-32 - pending_tetromino_surface.get_height()))
+                screen.blit(pending_tetromino_surface, (408, 80))
 
         if self.gamemode == ENDLESS:
-            text.draw_text("Score: " + str(self.playfield.score), playfield_surface.get_width() + 32, 256, screen, text.get_font(16))
+            text.draw_aligned_text("Score: " + str(self.playfield.score), screen.get_width() - playfield_surface.get_width()/2 - 83, 43, screen, text.get_font(16))
         elif self.gamemode == SURVIVAL or self.gamemode == TIME_ATTACK:
-            text.draw_text("Chrono: " + format_time(self.playfield.timer), playfield_surface.get_width() + 32, 256, screen, text.get_font(10))
+            text.draw_text("Chrono: " + format_time(self.playfield.timer), screen.get_width() - playfield_surface.get_width()/2 - 148, 43, screen, text.get_font(10))
             if self.gamemode == TIME_ATTACK:
-                text.draw_text("Lignes: " + str(self.playfield.lines_cleared), playfield_surface.get_width() + 32, 256+24, screen, text.get_font(10))
+                text.draw_text("Lignes: " + str(self.playfield.lines_cleared), screen.get_width() - playfield_surface.get_width() + 13, 43-24, screen, text.get_font(10))
 
         if self.is_game_over():
             render_overlay(screen)
