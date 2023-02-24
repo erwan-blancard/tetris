@@ -24,6 +24,9 @@ class CustomizeState(GameState):
 
         self.show_profile_warning = False
 
+        self.key_hints_solo = pygame.image.load("res/key_hints_solo.png")
+        self.key_hints_solo = pygame.transform.scale(self.key_hints_solo, (self.key_hints_solo.get_width()*2, self.key_hints_solo.get_height()*2))
+
     def open_profile_shortcut(self, second_profile=False):
         game_state.last_gamemode_type = self.gamemode_type
         if second_profile:
@@ -63,6 +66,8 @@ class CustomizeState(GameState):
             text.draw_aligned_text("VS", screen.get_width()/2, screen.get_height()-128-28, screen, text.get_font(40), color=(255, 220, 30), shadow_color=(255, 140, 30), shadow_offset=5)
             if self.show_profile_warning:
                 text.draw_aligned_text("Les noms de profil sont identiques !", screen.get_width() / 2, screen.get_height() - 128 - 64, screen, text.get_font(12), color=(255, 60, 60))
+        else:
+            screen.blit(self.key_hints_solo, (screen.get_width()/2-self.key_hints_solo.get_width()/2, screen.get_height()-128-72))
         text.draw_aligned_text("Modes de jeu", screen.get_width()/2, 24, screen, text.get_font(32), color=(255, 220, 30), shadow_color=(255, 140, 30), shadow_offset=4)
         gamemode_text = str(self.gamemode_type)
         description = ["Description for gamemode " + str(self.gamemode_type)]

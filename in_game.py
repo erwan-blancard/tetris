@@ -44,6 +44,9 @@ class InGameState(game_state.GameState):
             self.warning_sign = pygame.image.load("res/warning.png")
             self.warning_sign = pygame.transform.scale(self.warning_sign, (32, 32))
 
+            self.key_hints_p1 = pygame.image.load("res/key_hints_p1.png")
+            self.key_hints_p2 = pygame.image.load("res/key_hints_p2.png")
+
         window_bounds = pygame.display.get_window_size()
         self.buttons = [
             ButtonLabel("Continuer", window_bounds[0] / 2 - 109, window_bounds[1] / 2, 218, 24, font=text.get_font(24), command=lambda: self.close_pause_menu()),
@@ -115,6 +118,9 @@ class InGameState(game_state.GameState):
             if self.second_playfield.pending_badlines > 0:
                 screen.blit(self.warning_sign, (screen.get_width() - second_playfield_surface.get_width()/2 - 50-48, 200 + second_playfield_surface.get_height() + 12))
                 text.draw_text(": " + str(self.second_playfield.pending_badlines), screen.get_width() - second_playfield_surface.get_width()/2 - 50, 200+second_playfield_surface.get_height()+16, screen, text.get_font(20), color=(255, 70, 70), shadow_color=(200, 0, 0), shadow_offset=2)
+
+            screen.blit(self.key_hints_p1, (50+playfield_surface.get_width()/2-self.key_hints_p1.get_width()/2, screen.get_height() - 64))
+            screen.blit(self.key_hints_p2, (screen.get_width() - second_playfield_surface.get_width()/2 - 50 - self.key_hints_p2.get_width() / 2, screen.get_height() - 64))
 
         if self.gamemode == ENDLESS:
             text.draw_aligned_text("Score: " + str(self.playfield.score), screen.get_width() - playfield_surface.get_width()/2 - 83, 43, screen, text.get_font(16))
