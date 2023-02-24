@@ -68,16 +68,25 @@ class CustomizeState(GameState):
         description = ["Description for gamemode " + str(self.gamemode_type)]
         if self.gamemode_type == ENDLESS:
             gamemode_text = "Classique"
-            description = ["Le mode classique", "de Tetris !"]
+            description = [
+                "Le mode classique",
+                "de Tetris !"]
         elif self.gamemode_type == SURVIVAL:
             gamemode_text = "Survie"
-            description = ["Pas de score !", "Seul le temps compte !"]
+            description = ["Pas de score !",
+                           "Seul le temps compte !"]
         elif self.gamemode_type == TIME_ATTACK:
             gamemode_text = "Time Attack"
-            description = ["Effacez le plus", "de lignes dans le", "temps imparti !"]
+            description = ["Effacez le plus",
+                           "de lignes dans le",
+                           "temps imparti !"]
         elif self.gamemode_type == MULTIPLAYER:
             gamemode_text = "1c1 Versus"
-            description = ["Jouez avec un ami dans", "ce mode 1c1 Versus !"]
+            description = ["Jouez avec un ami dans",
+                           "ce mode 1c1 Versus !",
+                           "Bloquez votre adversaire",
+                           "en lui envoyant des blocs",
+                           "en nettoyant vos lignes !"]
         text.draw_aligned_text(gamemode_text, screen.get_width() / 2, screen.get_height() / 2 - 64 + 4, screen, text.get_font(24))
         for i in range(len(description)):
             text.draw_aligned_text(description[i], screen.get_width() / 2, screen.get_height() / 2 + 32 + i*(28), screen, text.get_font(18))

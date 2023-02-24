@@ -22,7 +22,7 @@ class ScoreBoardState(GameState):
 
         self.buttons = [
             ButtonLabel("Classique", self.scrolling_list.x, self.scrolling_list.y - 32, int(self.scrolling_list.width/3), 32, text.get_font(14), command=lambda: self.set_tab_endless()),
-            ButtonLabel("Survie", self.scrolling_list.x + int(self.scrolling_list.width/3), self.scrolling_list.y - 32, int(self.scrolling_list.width/3), 32, text.get_font(14), command=lambda: self.set_tab_survivial()),
+            ButtonLabel("Survie", self.scrolling_list.x + int(self.scrolling_list.width/3), self.scrolling_list.y - 32, int(self.scrolling_list.width/3)+1, 32, text.get_font(14), command=lambda: self.set_tab_survivial()),
             ButtonLabel("Time Attack", self.scrolling_list.x + int((self.scrolling_list.width/3)*2), self.scrolling_list.y - 32, int(self.scrolling_list.width/3), 32, text.get_font(14), command=lambda: self.set_tab_time_attack())
         ]
 

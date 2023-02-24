@@ -86,6 +86,9 @@ class Playfield:
             else:
                 self.print_tetromino_on_board()
                 self.update_lines()
+                if self.gamemode == MULTIPLAYER:
+                    if self.pending_badlines > 0:
+                        self.add_pending_badlines()
                 self.spawn_next_tetrominos()
                 self.turns += 1
                 self.update_TBU()
@@ -205,9 +208,7 @@ class Playfield:
             self.clear_lines(list_rows_filled)
             self.add_points_by_combo(len(list_rows_filled))
             if self.gamemode == MULTIPLAYER:
-                self.next_opponent_badlines = len(list_rows_filled) -1
-                if self.pending_badlines > 0:
-                    self.add_pending_badlines()
+                self.next_opponent_badlines = len(list_rows_filled)-1
 
     def clear_lines(self, rows_filled: list[int]):
         new_blocks: list[list[int]] = []
@@ -227,25 +228,19 @@ class Playfield:
         self.blocks = new_blocks
 
     def add_pending_badlines(self):
-        print("add badlines")
-        new_blocks: list[list[int]] = []
-        for col in range(len(self.blocks)):
-            new_blocks.append([])
-            for row in range(len(self.blocks[0])):
-                new_blocks[col].append(0)
+        print("adding lines:", self.pending_badlines)
+        new_blocks = self.blocks
 
-        for col in range(len(self.blocks)):
-            omitted_col = random.randint(0, len(self.blocks)-1)
-            for row in range(len(self.blocks[0])):
-                if 0 <= row - self.pending_badlines < len(self.blocks[0]):
-                    new_blocks[col][row] = self.blocks[col][row - self.pending_badlines]
-                elif row - self.pending_badlines:
-                    print("add badlines elif")
-                    if col != omitted_col:
-                        new_blocks[col][row] = -1
-                    else:
-                        new_blocks[col][row] = B_EMPTY
+        omitted_col = random.randint(0, len(new_blocks)-1)
+
+        for col in range(len(new_blocks)):
+            new_blocks[col] = new_blocks[col][self.pending_badlines:]
+        for i in range(self.pending_badlines):
+            for col in range(len(new_blocks)):
+                if col != omitted_col:
+                    new_blocks[col].append(-1)
+                else:
+                    new_blocks[col].append(0)
 
         self.pending_badlines = 0
-        self.added_badlines = True
         self.blocks = new_blocks
