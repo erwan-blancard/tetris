@@ -228,7 +228,6 @@ class Playfield:
         self.blocks = new_blocks
 
     def add_pending_badlines(self):
-        print("adding lines:", self.pending_badlines)
         new_blocks = self.blocks
 
         omitted_col = random.randint(0, len(new_blocks)-1)
