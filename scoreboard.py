@@ -67,12 +67,10 @@ class ScoreBoardState(GameState):
             line = time_attack_scores[i][0]        # profile_name
             for j in range(18 - len(time_attack_scores[i][0])):
                 line += " "
-            time = time_attack_scores[i][1]
-            if time < 0:
-                time = "---"
-                line += str(time)
-            else:
-                line += in_game.format_time(time)
+            score = time_attack_scores[i][1]
+            if score < 0:
+                score = "---"
+            line += str(score)
             self.list_gamemodes_score[TIME_ATTACK].append(line)
 
         # self.list_gamemodes_score = [endless_scores, survival_scores, time_attack_scores]
