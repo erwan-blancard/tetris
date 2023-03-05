@@ -132,7 +132,15 @@ class Playfield:
         if self.gamemode == TIME_ATTACK:
             self.lines_cleared += num_rows
         elif self.gamemode == ENDLESS:
-            self.score += (num_rows+(num_rows//4))*100
+            # self.score += (num_rows+(num_rows//4))*100
+            if num_rows == 1:
+                self.score += 40
+            elif num_rows == 2:
+                self.score += 100
+            elif num_rows == 3:
+                self.score += 300
+            elif num_rows >= 4:
+                self.score += 1200
 
     def get_block_color(self, col, row):
         color_index = self.blocks[col][row]
